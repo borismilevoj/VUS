@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ugankarski slovar</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon"> <!-- Dodana vrstica za favicon -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        input {
+            padding: 8px;
+            width: 250px;
+            margin: 5px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+        th {
+            background-color: lightgray;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ugankarski slovar</h1>
+
+    <h2>Iskanje po ključnih besedah</h2>
+    <input type="text" id="keyword" placeholder="Vnesite ključno besedo">
+    <button onclick="searchKeyword()">Išči</button>
+
+    <h2>Iskanje po vzorcu (_ _ S _)</h2>
+    <input type="text" id="pattern" placeholder="Vnesite vzorec (npr. __S_)">
+    <button onclick="searchPattern()">Išči</button>
+
+    <h2>Rezultati</h2>
+    <table id="results">
+        <tr>
+            <th>Geslo</th>
+            <th>Opis</th>
+        </tr>
+    </table>
+
+    <script>
+        function searchKeyword() {
+            let keyword = document.getElementById("keyword").value;
+            fetch(`/search?keyword=${keyword}`)
+                .then(response => response.json())
+                .then(data => displayResults(data));
+        }
+
+        function searchPattern() {
+            let pattern = document.getElementById("pattern").value;
+            fetch(`/pattern?pattern=${pattern}`)
+                .then(response => response.json())
+                .then(data => displayResults(data));
+        }
+
+        function displayResults(data) {
+            let table = document.getElementById("results");
+            table.innerHTML = "<tr><th>Geslo</th><th>Opis</th></tr>";
+
+            if (data.message) {
+                let row = table.insertRow();
+                let cell = row.insertCell(0);
+                cell.colSpan = 2;
+                cell.innerHTML = data.message;
+            } else {
+                data.forEach(row => {
+                    let newRow = table.insertRow();
+                    let cell1 = newRow.insertCell(0);
+                    let cell2 = newRow.insertCell(1);
+                    cell1.innerHTML = row[0];
+                    cell2.innerHTML = row[1];
+                });
+            }
+        }
+    </script>
+</body>
+</html>

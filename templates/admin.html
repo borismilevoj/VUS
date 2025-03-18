@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Administracija slovarja</title>
+    <link rel="stylesheet" href="static/style.css">
+    <script src="static/admin.js"></script>
+</head>
+<body>
+
+<h1>Upravljanje slovarja</h1>
+
+<div class="dodajanje-gesel">
+    <input type="text" id="novo-geslo" placeholder="Vnesi geslo">
+    <input type="text" id="opis-geslo" placeholder="Vnesi opis">
+    <button onclick="dodajGeslo()">➕ Dodaj geslo</button>
+</div>
+
+<hr>
+
+<div class="preverjanje">
+    <input type="text" id="preveri-geslo" placeholder="Vnesi geslo za preverjanje">
+    <button onclick="preveriGeslo()">🔍 Preveri</button>
+    <button onclick="ponastaviRezultate()">🔄 Ponastavi</button>
+</div>
+
+<div id="stevec">📊 Število gesel: 0</div>
+
+<table id="tabela-gesel">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Geslo</th>
+            <th>Opis</th>
+            <th>Urejanje</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Dinamično prikazani rezultati -->
+    </tbody>
+</table>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        stevecGesel();
+    });
+</script>
+
+<script src="static/admin.js"></script>
+
+</body>
+</html>

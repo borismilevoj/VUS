@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Iskanje gesel</title>
+    <link rel="stylesheet" href="/static/slog.css">
+    <script src="/static/iskanje.js"></script>
+</head>
+<body>
+    <div class="search-section">
+        <h2>🔍 Iskanje gesel po vzorcu</h2>
+        <label for="dolzina-gesla">Dolžina gesla:</label>
+        <select id="dolzina-gesla" onchange="prikaziPoljaZaCrke()">
+            <option value="0">Izberi dolžino</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+        </select>
+
+        <div id="crke-container">
+            <script>
+                for (let i = 0; i < 20; i++) {
+                    document.write(`<input type="text" class="crka-input" maxlength="1" disabled>`);
+                }
+            </script>
+        </div>
+
+        <button onclick="isciPoVzorcu()">🔍 Išči</button>
+        <button onclick="ponastaviVnos()">🔄 Ponastavi</button>
+    </div>
+
+    <div class="search-section">
+        <label for="isci-opis">🚀 <strong>Splošno iskanje (geslo, opis, ime, letnica)</strong></label>
+        <input type="text" id="isci-opis" placeholder="Vnesi opis za iskanje...">
+        <button onclick="isciPoOpisu()">🔍 Išči</button>
+        <button onclick="ponastaviVnos()">🔄 Ponastavi</button>
+        <div id="stevec">📊 Število zadetkov: 0</div>
+    </div>
+
+    <table id="rezultati">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Geslo</th>
+                <th>Opis</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+</body>
+</html>
