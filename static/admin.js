@@ -36,9 +36,11 @@ function dodajGeslo() {
     });
 }
 
+
+
 // 🔍 PREVERI GESLO
 function preveriGeslo() {
-    const gesloInput = document.getElementById('preveri-geslo');
+    const gesloInput = document.getElementById('preveri-geslo-input');
     const geslo = gesloInput.value.trim();
 
     if (!geslo) {
@@ -53,9 +55,20 @@ function preveriGeslo() {
     })
     .then(res => res.json())
     .then(data => {
-        prikaziZadetke(data.zadetki);
+        if (data.zadetki && data.zadetki.length > 0) {
+            prikaziZadetke(data.zadetki);
+        } else {
+            alert(data.sporocilo || 'Gesla ni v bazi!');
+            document.querySelector('#tabela-gesel tbody').innerHTML = '';
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Napaka pri komunikaciji s strežnikom!");
     });
 }
+
+
 
 // ✅ PRIKAZI ZADETKE
 function prikaziZadetke(zadetki) {

@@ -110,6 +110,7 @@ def admin():
 def iskanje():
     return render_template("iskanje.html")
 
+
 # PREVERI GESLO (neodvisno od velikosti črk)
 @app.route('/preveri_geslo', methods=['POST'])
 def preveri_geslo():
@@ -131,7 +132,12 @@ def preveri_geslo():
         key=lambda x: posebna_sortirna_funkcija(x['opis'])
     )
 
+    if not sortirani_rezultati:
+        return jsonify({"sporocilo": "Gesla ni v bazi.", "zadetki": []})
+
     return jsonify({'zadetki': sortirani_rezultati})
+
+
 
 # DODAJ GESLO
 @app.route("/dodaj_geslo", methods=["POST"])
