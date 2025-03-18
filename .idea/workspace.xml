@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2147de67-584f-4cdd-b0c8-9a556bd0f1a6" name="Changes" comment="Delujoča različica: dodaj, preveri, briši, uredi, išči po opisu NE DELA, urejeno sortiranje" />
+    <list default="true" id="2147de67-584f-4cdd-b0c8-9a556bd0f1a6" name="Changes" comment="Popravljeno preverjanje gesla, dodano opozorilo &quot;gesla ni v bazi&quot;">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -173,7 +175,42 @@
       <option name="presentableId" value="LOCAL−00003" />
       <updated>1742309173838</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL−00004" summary="Popravljeno preverjanje gesla, dodano opozorilo &quot;gesla ni v bazi&quot;">
+      <option name="closed" value="true" />
+      <created>1742309555513</created>
+      <option name="number" value="LOCAL−00004" />
+      <option name="presentableId" value="LOCAL−00004" />
+      <updated>1742309555513</updated>
+    </task>
+    <task id="LOCAL−00005" summary="Popravljeno preverjanje gesla, dodano opozorilo &quot;gesla ni v bazi&quot;">
+      <option name="closed" value="true" />
+      <created>1742309605391</created>
+      <option name="number" value="LOCAL−00005" />
+      <option name="presentableId" value="LOCAL−00005" />
+      <updated>1742309605391</updated>
+    </task>
+    <task id="LOCAL−00006" summary="Popravljeno preverjanje gesla, dodano opozorilo &quot;gesla ni v bazi&quot;">
+      <option name="closed" value="true" />
+      <created>1742309757564</created>
+      <option name="number" value="LOCAL−00006" />
+      <option name="presentableId" value="LOCAL−00006" />
+      <updated>1742309757564</updated>
+    </task>
+    <task id="LOCAL−00007" summary="Popravljeno preverjanje gesla, dodano opozorilo &quot;gesla ni v bazi&quot;">
+      <option name="closed" value="true" />
+      <created>1742309801583</created>
+      <option name="number" value="LOCAL−00007" />
+      <option name="presentableId" value="LOCAL−00007" />
+      <updated>1742309801583</updated>
+    </task>
+    <task id="LOCAL−00008" summary="Popravljeno preverjanje gesla, dodano opozorilo &quot;gesla ni v bazi&quot;">
+      <option name="closed" value="true" />
+      <created>1742310157217</created>
+      <option name="number" value="LOCAL−00008" />
+      <option name="presentableId" value="LOCAL−00008" />
+      <updated>1742310157217</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -189,8 +226,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Začetna delujoča verzija aplikacije (DODAJ, PREVERI, ŠTEVEC)" />
-    <MESSAGE value="Popravljeno preverjanje gesla, dodano opozorilo &quot;gesla ni v bazi&quot;" />
     <MESSAGE value="Delujoča različica: dodaj, preveri, briši, uredi, išči po opisu NE DELA, urejeno sortiranje" />
-    <option name="LAST_COMMIT_MESSAGE" value="Delujoča različica: dodaj, preveri, briši, uredi, išči po opisu NE DELA, urejeno sortiranje" />
+    <MESSAGE value="Delujoča verzija DODAJ, PREVERI, SORTIRANJE (IŠČI po geslu NE)" />
+    <MESSAGE value="Popravljeno preverjanje gesla, dodano opozorilo &quot;gesla ni v bazi&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Popravljeno preverjanje gesla, dodano opozorilo &quot;gesla ni v bazi&quot;" />
   </component>
 </project>
