@@ -1,239 +1,125 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, g
 import sqlite3
-import locale
 
-locale.setlocale(locale.LC_ALL, 'sl_SI.UTF-8')
+app = Flask(__name__)
 
-app = Flask(__name__, static_folder='static')
+# Pravilna povezava z bazo za Flask
 
-# Posebna sortirna funkcija
-def posebna_sortirna_funkcija(opis):
-    deli = opis.split('-')
-    if len(deli) >= 2:
-        return deli[1].strip().lower()
-    else:
-        return 'žžžžž' + opis.lower()
+def get_db():
+    if 'db' not in g:
+        g.db = sqlite3.connect('veliki_ugankarski_slovar.db', check_same_thread=False)
+        g.db.row_factory = sqlite3.Row
+    return g.db
+
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
+
+# Glavna stran
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+# Administracija
 
 @app.route("/admin")
 def admin():
     return render_template("admin.html")
 
-@app.route("/iskanje")
-def iskanje():
-    return render_template("iskanje.html")
+# Števec gesel
 
-# PREVERI GESLO (neodvisno od velikosti črk)
-@app.route('/preveri_geslo', methods=['POST'])
-def preveri_geslo():
-    podatki = request.json
-    geslo = podatki.get("geslo", "").strip().upper()
-
-    if not geslo:
-        return jsonify({"napaka": "Vnesi geslo za preverjanje!"}), 400
-
-    con = sqlite3.connect("veliki_ugankarski_slovar.db")
-    cur = con.cursor()
-
-    cur.execute("SELECT id, geslo, opis FROM slovar WHERE UPPER(geslo) = ?", (geslo,))
-    rezultati = cur.fetchall()
-    con.close()
-
-    sortirani_rezultati = sorted(
-        [{'id': id, 'geslo': ges, 'opis': op} for id, ges, op in rezultati],
-        key=lambda x: posebna_sortirna_funkcija(x['opis'])
-    )
-
-    return jsonify({'zadetki': sortirani_rezultati})
-
-# DODAJ GESLO
-@app.route("/dodaj_geslo", methods=["POST"])
-def dodaj_geslo():
-    podatki = request.json
-    geslo = podatki.get("geslo").upper()
-    opis = podatki.get("opis")
-
-    if not geslo or not opis:
-        return jsonify({"napaka": "Geslo in opis sta obvezna!"}), 400
-
-    con = sqlite3.connect("veliki_ugankarski_slovar.db")
-    cur = con.cursor()
-
-    cur.execute("INSERT INTO slovar (geslo, opis) VALUES (?, ?)", (geslo, opis))
-    con.commit()
-
-    cur.execute("SELECT id, geslo, opis FROM slovar WHERE geslo = ? ORDER BY opis", (geslo,))
-    rezultati = cur.fetchall()
-    con.close()
-
-    sortirani_rezultati = sorted(
-        [{'id': id, 'geslo': ges, 'opis': op} for id, ges, op in rezultati],
-        key=lambda x: posebna_sortirna_funkcija(x['opis'])
-    )
-
-    return jsonify({
-        "sporocilo": "Geslo je bilo uspešno dodano.",
-        "zadetki": sortirani_rezultati
-    })
-
-# ŠTEVEC GESEL
-@app.route("/stevilo_gesel", methods=["GET"])
+@app.route('/stevilo_gesel', methods=['GET'])
 def stevilo_gesel():
-    con = sqlite3.connect("veliki_ugankarski_slovar.db")
-    cur = con.cursor()
-    cur.execute("SELECT COUNT(*) FROM slovar")
+    baza = get_db()
+    cur = baza.cursor()
+    cur.execute("SELECT COUNT(*) FROM gesla")
     stevilo = cur.fetchone()[0]
-    con.close()
     return jsonify({"stevilo": stevilo})
 
-# ✏️ UREDI GESLO
-from flask import Flask, render_template, request, jsonify
-import sqlite3
-import locale
+# Dodaj geslo
 
-locale.setlocale(locale.LC_ALL, 'sl_SI.UTF-8')
+@app.route('/dodaj_geslo', methods=['POST'])
+def dodaj_geslo():
+    baza = get_db()
+    data = request.json
+    novo_geslo = data["geslo"]
+    nov_opis = data["opis"]
+    cur = baza.cursor()
+    cur.execute("INSERT INTO gesla (geslo, opis) VALUES (?, ?)", (novo_geslo, nov_opis))
+    baza.commit()
+    return jsonify({"sporocilo": "Geslo uspešno dodano!"})
 
-app = Flask(__name__, static_folder='static')
+# Preveri geslo
 
-# Posebna sortirna funkcija
-def posebna_sortirna_funkcija(opis):
-    deli = opis.split('-')
-    if len(deli) >= 2:
-        return deli[1].strip().lower()
+@app.route('/preveri_geslo', methods=['POST'])
+def preveri_geslo():
+    baza = get_db()
+    geslo = request.json["geslo"]
+    cur = baza.cursor()
+    cur.execute("SELECT * FROM gesla WHERE geslo = ?", (geslo,))
+    rezultat = cur.fetchone()
+    if rezultat:
+        return jsonify({
+            "sporocilo": "Geslo je v bazi!",
+            "geslo": geslo,
+            "opis": {col[0]: rezultat[ix] for ix, col in enumerate(cur.description) for ix, rezultat in
+                     enumerate(rezultat)}
+        })
     else:
-        return 'žžžžž' + opis.lower()
+        return jsonify({"sporocilo": "Gesla ni v bazi!"})
 
-@app.route("/admin")
-def admin():
-    return render_template("admin.html")
+# Uredi geslo
 
-@app.route("/iskanje")
-def iskanje():
-    return render_template("iskanje.html")
-
-
-# PREVERI GESLO (neodvisno od velikosti črk)
-@app.route('/preveri_geslo', methods=['POST'])
-def preveri_geslo():
-    podatki = request.json
-    geslo = podatki.get("geslo", "").strip().upper()
-
-    if not geslo:
-        return jsonify({"napaka": "Vnesi geslo za preverjanje!"}), 400
-
-    con = sqlite3.connect("veliki_ugankarski_slovar.db")
-    cur = con.cursor()
-
-    cur.execute("SELECT id, geslo, opis FROM slovar WHERE UPPER(geslo) = ?", (geslo,))
-    rezultati = cur.fetchall()
-    con.close()
-
-    sortirani_rezultati = sorted(
-        [{'id': id, 'geslo': ges, 'opis': op} for id, ges, op in rezultati],
-        key=lambda x: posebna_sortirna_funkcija(x['opis'])
-    )
-
-    if not sortirani_rezultati:
-        return jsonify({"sporocilo": "Gesla ni v bazi.", "zadetki": []})
-
-    return jsonify({'zadetki': sortirani_rezultati})
-
-
-
-# DODAJ GESLO
-@app.route("/dodaj_geslo", methods=["POST"])
-def dodaj_geslo():
-    podatki = request.json
-    geslo = podatki.get("geslo").upper()
-    opis = podatki.get("opis")
-
-    if not geslo or not opis:
-        return jsonify({"napaka": "Geslo in opis sta obvezna!"}), 400
-
-    con = sqlite3.connect("veliki_ugankarski_slovar.db")
-    cur = con.cursor()
-
-    cur.execute("INSERT INTO slovar (geslo, opis) VALUES (?, ?)", (geslo, opis))
-    con.commit()
-
-    cur.execute("SELECT id, geslo, opis FROM slovar WHERE geslo = ? ORDER BY opis", (geslo,))
-    rezultati = cur.fetchall()
-    con.close()
-
-    sortirani_rezultati = sorted(
-        [{'id': id, 'geslo': ges, 'opis': op} for id, ges, op in rezultati],
-        key=lambda x: posebna_sortirna_funkcija(x['opis'])
-    )
-
-    return jsonify({
-        "sporocilo": "Geslo je bilo uspešno dodano.",
-        "zadetki": sortirani_rezultati
-    })
-
-# ŠTEVEC GESEL
-@app.route("/stevilo_gesel", methods=["GET"])
-def stevilo_gesel():
-    con = sqlite3.connect("veliki_ugankarski_slovar.db")
-    cur = con.cursor()
-    cur.execute("SELECT COUNT(*) FROM slovar")
-    stevilo = cur.fetchone()[0]
-    con.close()
-    return jsonify({"stevilo": stevilo})
-
-# ✏️ UREDI GESLO
-@app.route("/uredi_geslo", methods=["POST"])
+@app.route('/uredi_geslo', methods=['POST'])
 def uredi_geslo():
-    podatki = request.json
-    id = podatki.get("id")
-    novi_opis = podatki.get("novi_opis")
+    baza = get_db()
+    data = request.json
+    cur = baza.cursor()
+    cur.execute("UPDATE gesla SET geslo = ?, opis = ? WHERE id = ?",
+                (data["geslo"], data["opis"], data["id"]))
+    baza.commit()
+    return jsonify({"sporocilo": "Geslo uspešno urejeno!"})
 
-    if not id or not novi_opis:
-        return jsonify({"napaka": "ID in novi opis sta obvezna!"}), 400
+# Izbriši geslo
 
-    con = sqlite3.connect("veliki_ugankarski_slovar.db")
-    cur = con.cursor()
-    cur.execute("UPDATE slovar SET opis = ? WHERE id = ?", (novi_opis, id))
-    con.commit()
-    con.close()
-
-    return jsonify({"sporocilo": "Geslo uspešno urejeno!"}), 200
-
-# 🗑️ IZBRISI GESLO
-@app.route("/izbrisi_geslo", methods=["POST"])
+@app.route('/izbrisi_geslo', methods=['POST'])
 def izbrisi_geslo():
-    podatki = request.json
-    id = podatki.get("id")
+    baza = get_db()
+    geslo_id = request.json["id"]
+    cur = baza.cursor()
+    cur.execute("DELETE FROM gesla WHERE id = ?", (geslo_id,))
 
-    if not id:
-        return jsonify({"napaka": "ID je obvezen!"}), 400
-
-    con = sqlite3.connect("veliki_ugankarski_slovar.db")
-    cur = con.cursor()
-    cur.execute("DELETE FROM slovar WHERE id = ?", (id,))
-    con.commit()
-    con.close()
-
+    baza.commit()
     return jsonify({"sporocilo": "Geslo je bilo izbrisano."})
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# Išči po opisu
 
+@app.route('/isci_po_opisu', methods=['POST'])
+def isci_po_opisu():
+    baza = get_db()
+    opis = request.json['iskanje']
+    cur = baza.cursor()
+    cur.execute("SELECT * FROM gesla WHERE opis LIKE ?", ('%' + opis + '%',))
+    rezultati = cur.fetchall()
+    return jsonify({"rezultati": rezultati_v_slovar(cur, rezultati)})
 
-# 🗑️ IZBRISI GESLO
-@app.route("/izbrisi_geslo", methods=["POST"])
-def izbrisi_geslo():
-    podatki = request.json
-    id = podatki.get("id")
+# Pretvori rezultat v slovar
 
-    if not id:
-        return jsonify({"napaka": "ID je obvezen!"}), 400
+def rezultati_v_slovar(cur, rezultati):
+    stolpci = [desc[0] for desc in cur.description]
+    return [dict(zip(stolpci, vrstica)) for vrstica in rezultati]
 
-    con = sqlite3.connect("veliki_ugankarski_slovar.db")
-    cur = con.cursor()
-    cur.execute("DELETE FROM slovar WHERE id = ?", (id,))
-    con.commit()
-    con.close()
+# Obvezno za sprostitev baze ob koncu zahteve
 
-    return jsonify({"sporocilo": "Geslo je bilo izbrisano."})
+@app.teardown_appcontext
+def close_connection(exception):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
