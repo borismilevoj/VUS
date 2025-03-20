@@ -8,8 +8,13 @@ function stevecGesel() {
         .then(res => res.json())
         .then(data => {
             document.getElementById('stevec').innerText = `📊 Število gesel: ${data.stevilo}`;
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Napaka pri komunikaciji s strežnikom!");
         });
 }
+
 
 // ➕ DODAJ GESLO
 function dodajGeslo() {
@@ -129,8 +134,8 @@ function izbrisiGeslo(id) {
     });
 }
 
-// 🔍 ISKANJE PO OPISU
-function isciPoOpisu() {
+// 🔍 POIŠČI OPIS
+function poisciOpis() {
     const opis = document.getElementById('isci-input').value.trim();
 
     fetch('/isci_po_opisu', {
@@ -141,11 +146,17 @@ function isciPoOpisu() {
     .then(res => res.json())
     .then(data => {
         prikaziZadetke(data.rezultati);
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Napaka pri komunikaciji s strežnikom!");
     });
 }
 
-// 🔄 PONASTAVI
+
+// 🔄 PONASTAVI REZULTATE ZA PREVERI
 function ponastaviRezultate() {
-    document.getElementById('preveri-geslo').value = '';
+    document.getElementById('preveri-geslo-input').value = '';
     document.querySelector('#tabela-gesel tbody').innerHTML = '';
 }
+
