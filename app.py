@@ -32,21 +32,39 @@ if os.path.exists('izvoz_slovarja_z_ID.xlsx'):
     print("Excel datoteka naložena.")
 else:
     print("Excel datoteka ni bila najdena – preskočena.")
-df_stara.columns = ['ID', 'GESLO', 'OPIS']
-if 'ID' not in df_stara.columns:
-    df_stara.insert(0, 'ID', range(1, 1 + len(df_stara)))
+import os
 
-df_nova = pd.read_excel('SLOVAR Excel.xlsx', header=None, dtype=str)
-df_nova.columns = ['GESLO', 'OPIS']
+# DF STARA
+if os.path.exists('izvoz_slovarja_z_ID.xlsx'):
+    df_stara = pd.read_excel('izvoz_slovarja_z_ID.xlsx', header=None, dtype=str)
+    df_stara.columns = ['ID', 'GESLO', 'OPIS']
+    if 'ID' not in df_stara.columns:
+        df_stara.insert(0, 'ID', range(1, 1 + len(df_stara)))
+    print("Excel datoteka df_stara naložena.")
+else:
+    df_stara = None
+    print("Excel datoteka df_stara ni bila najdena – preskočena.")
 
-# KLJUČNI POPRAVEK (odstrani duplikate samo če sta geslo IN opis identična)
+# DF NOVA
+if os.path.exists('SLOVAR Excel.xlsx'):
+    df_nova = pd.read_excel('SLOVAR Excel.xlsx', header=None, dtype=str)
+    df_nova.columns = ['GESLO', 'OPIS']
+    print("Excel datoteka df_nova naložena.")
+else:
+    df_nova = None
+    print("Excel datoteka df_nova ni bila najdena – preskočena.")
 
-df_koncna = pd.concat([df_stara, df_nova]).drop_duplicates(subset=["GESLO", "OPIS"]).reset_index(drop=True)
-# začasni test duplikatov v posamezni datoteki
-print("Stara baza vrstic:", len(df_stara))
-print("Nova baza vrstic:", len(df_nova))
-print("Stara baza (brez duplikatov po geslu+opisu):", len(df_stara.drop_duplicates(subset=["GESLO", "OPIS"])))
-print("Nova baza (brez duplikatov po geslu+opisu):", len(df_nova.drop_duplicates(subset=["GESLO", "OPIS"])))
+# DF KONČNA (če je vsaj ena tabela na voljo)
+if df_stara is not None and df_nova is not None:
+    df_koncna = pd.concat([df_stara, df_nova]).drop_duplicates(subset=["GESLO", "OPIS"]).reset_index(drop=True)
+elif df_stara is not None:
+    df_koncna = df_stara
+elif df_nova is not None:
+    df_koncna = df_nova
+else:
+    df_koncna = None
+    print("Nobena Excel datoteka ni na voljo – df_koncna je prazna.")
+
 
 
 
