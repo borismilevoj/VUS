@@ -25,7 +25,13 @@ def close_db(e=None):
 
 # uvoz Excel datotek
 
-df_stara = pd.read_excel('izvoz_slovarja_z_ID.xlsx', header=None, dtype=str)
+import os
+
+if os.path.exists('izvoz_slovarja_z_ID.xlsx'):
+    df = pd.read_excel('izvoz_slovarja_z_ID.xlsx')
+    print("Excel datoteka naložena.")
+else:
+    print("Excel datoteka ni bila najdena – preskočena.")
 df_stara.columns = ['ID', 'GESLO', 'OPIS']
 if 'ID' not in df_stara.columns:
     df_stara.insert(0, 'ID', range(1, 1 + len(df_stara)))
