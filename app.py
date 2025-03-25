@@ -13,7 +13,8 @@ def admin():
 
 @app.route("/home")
 def home():
-    return render_template("home.html")
+    return "<h1>Deluje – to je direktni response brez predloge!</h1>"
+
 
 
 # povezava z bazo
