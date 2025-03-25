@@ -13,3 +13,7 @@ def home():
 @app.route('/admin')
 def admin():
     return "<h1>Admin testna stran deluje!</h1>"
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=10000)
